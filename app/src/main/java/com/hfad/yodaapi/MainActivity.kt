@@ -69,7 +69,10 @@ class MainActivity : Activity() {
         moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
 
-        searchButton.setOnClickListener {searchRequest()}
+        searchButton.setOnClickListener {
+            val intent = Intent(this, PlayerActivity::class.java)
+            startActivity(intent)
+        }
 
         queryInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {

@@ -23,7 +23,7 @@ android:background="@color/white">
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:text="@string/search"/>
+        android:text="@string/player_str"/>
 </LinearLayout>
 
 <FrameLayout android:layout_width="match_parent"
