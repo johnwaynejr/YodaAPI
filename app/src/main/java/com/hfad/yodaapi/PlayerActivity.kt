@@ -21,7 +21,7 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
-        private const val TIME_ELAPSED_DELAY = 2000L
+        private const val TIME_ELAPSED_DELAY = 1000L
        }
 
    private val handler = Handler(Looper.getMainLooper())
@@ -66,7 +66,7 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.pause()
         play.text = "PLAY"
         playerState = STATE_PAUSED
-        //handler.removeCallbacks()
+        handler.removeCallbacks({playerState == STATE_PLAYING})
     }
     private fun playbackControl() {
         when(playerState) {
@@ -91,16 +91,23 @@ class PlayerActivity : AppCompatActivity() {
         var tElapsed = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
              mediaPlayer.duration-mediaPlayer.currentPosition)
                 timeElapsed.text = tElapsed
-
-                        if (playerState == STATE_PLAYING) {
-                            handler.postDelayed({playerState == STATE_PLAYING}, TIME_ELAPSED_DELAY)
-                            tElapsed = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                                mediaPlayer.duration-mediaPlayer.currentPosition)
-                            timeElapsed.text = tElapsed
-                        }
-
-
             }
+
+    override fun onStart() {
+        super.onStart()
+
+        handler?.postDelayed(
+            object : Runnable {
+                override fun run() {
+                    // Обновляем список в главном потоке
+                    if(playerState == STATE_PLAYING) {
+                        timeElapse()
+                    }
+                    // И снова планируем то же действие через 2 секунды
+                    handler?.postDelayed(this,TIME_ELAPSED_DELAY,)
+                }
+            },TIME_ELAPSED_DELAY)
+    }
 
 
 }
