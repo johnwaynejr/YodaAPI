@@ -1,14 +1,15 @@
 package com.hfad.yodaapi
 
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
+
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var play: Button
@@ -42,6 +43,7 @@ class PlayerActivity : AppCompatActivity() {
             timeElapse()
         }
 
+
         }
 
     private fun preparePlayer() {
@@ -51,9 +53,11 @@ class PlayerActivity : AppCompatActivity() {
             play.isEnabled = true
             playerState = STATE_PREPARED
         }
+
         mediaPlayer.setOnCompletionListener {
             play.text = "PLAY"
             playerState = STATE_PREPARED
+            timeElapsed.text="00:00"
         }
     }
     private fun startPlayer() {
@@ -66,7 +70,7 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.pause()
         play.text = "PLAY"
         playerState = STATE_PAUSED
-        handler.removeCallbacks({playerState == STATE_PLAYING})
+        handler.removeCallbacks({playerState == STATE_PAUSED})
     }
     private fun playbackControl() {
         when(playerState) {
@@ -82,8 +86,10 @@ class PlayerActivity : AppCompatActivity() {
         super.onPause()
         pausePlayer()
     }
+
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacks({playerState >=0})
         mediaPlayer.release()
     }
 
@@ -103,8 +109,8 @@ class PlayerActivity : AppCompatActivity() {
                     if(playerState == STATE_PLAYING) {
                         timeElapse()
                     }
-                    // И снова планируем то же действие через 2 секунды
-                    handler?.postDelayed(this,TIME_ELAPSED_DELAY,)
+                    // И снова планируем то же действие через 1 секунду
+                    handler?.postDelayed(this, TIME_ELAPSED_DELAY)
                 }
             },TIME_ELAPSED_DELAY)
     }
