@@ -1,4 +1,4 @@
-package com.hfad.yodaapi
+package com.hfad.yodaapi.domain.models
 
 data class Movie(val id: String,
                  val resultType: String,

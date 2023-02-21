@@ -1,4 +1,4 @@
-package com.hfad.yodaapi
+package com.hfad.yodaapi.ui.movies
 
 import android.app.Activity
 import android.content.Context
@@ -10,15 +10,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.Placeholder
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hfad.yodaapi.data.network.IMDbApiService
+import com.hfad.yodaapi.domain.models.Movie
+import com.hfad.yodaapi.data.dto.MoviesSearchResponse
+import com.hfad.yodaapi.R
+import com.hfad.yodaapi.ui.poster.PosterActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,9 +36,8 @@ class MainActivity : Activity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val imdbService = retrofit.create(IMDbApi::class.java)
+    private val imdbService = retrofit.create(IMDbApiService::class.java)
 
-    private lateinit var searchButton: Button
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
     private lateinit var moviesList: RecyclerView
@@ -47,11 +48,9 @@ class MainActivity : Activity() {
     private val movies = ArrayList<Movie>()
 
     private val adapter = MoviesAdapter {
-        if(clickDebounce()) {
-            val intent = Intent(this, PosterActivity::class.java)
-            intent.putExtra("poster", it.image)
-            startActivity(intent)
-        }
+        val intent = Intent(this, PosterActivity::class.java)
+        intent.putExtra("poster", it.image)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,19 +59,14 @@ class MainActivity : Activity() {
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         progressBar = findViewById(R.id.progressBar)
-        searchButton = findViewById(R.id.searchButton)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
+
 
         adapter.movies = movies
 
         moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
-
-        searchButton.setOnClickListener {
-            val intent = Intent(this, PlayerActivity::class.java)
-            startActivity(intent)
-        }
 
         queryInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -117,9 +111,9 @@ class MainActivity : Activity() {
             placeholderMessage.visibility = View.GONE
             moviesList.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
-            imdbService.findMovie(queryInput.text.toString()).enqueue(object : Callback<MoviesResponse> {
-                override fun onResponse(call: Call<MoviesResponse>,
-                                        response: Response<MoviesResponse>) {
+            imdbService.searchMovies(queryInput.text.toString()).enqueue(object : Callback<MoviesSearchResponse> {
+                override fun onResponse(call: Call<MoviesSearchResponse>,
+                                        response: Response<MoviesSearchResponse>) {
                     progressBar.visibility = View.GONE // Прячем ProgressBar после успешного выполнения запроса
                     if (response.code() == 200) {
                         movies.clear()
@@ -138,7 +132,7 @@ class MainActivity : Activity() {
                     }
                 }
 
-                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                override fun onFailure(call: Call<MoviesSearchResponse>, t: Throwable) {
                     showMessage(getString(R.string.something_went_wrong), t.message.toString())
                 }
 

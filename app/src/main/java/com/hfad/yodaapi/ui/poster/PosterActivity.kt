@@ -1,11 +1,10 @@
-package com.hfad.yodaapi
+package com.hfad.yodaapi.ui.poster
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.hfad.yodaapi.R
 
 
 class PosterActivity : AppCompatActivity() {

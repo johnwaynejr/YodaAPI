@@ -1,10 +1,9 @@
-package com.hfad.yodaapi
+package com.hfad.yodaapi.ui.movies
 
-import android.content.Intent
+
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.hfad.yodaapi.domain.models.Movie
 
 class MoviesAdapter(val clickListener: MovieClickListener) : RecyclerView.Adapter<MovieViewHolder>() {
 
